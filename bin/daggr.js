@@ -5,7 +5,7 @@
  *
  * Roadmap:
  * - Add filtering
- * - Add JSON support
+ * - Add "-o" support
  */
 
 var mod_path = require('path');
@@ -28,13 +28,18 @@ function main()
 	var keys = [];
 	var value = '1';
 	var action = 'print'
+	var mode = 'text';
 	var source, rowstream, consumer;
 
-	parser = new mod_getopt.BasicParser('k:v:', process.argv);
+	parser = new mod_getopt.BasicParser('jk:v:', process.argv);
 	while ((option = parser.getopt()) !== undefined) {
 		switch (option.option) {
 		case 'k':
 			keys.push(option.optarg);
+			break;
+
+		case 'j':
+			mode = 'json'
 			break;
 
 		case 'v':
@@ -47,9 +52,12 @@ function main()
 		action = process.argv[parser.optind()];
 
 	source = process.stdin;
-	rowstream = new mod_daggr.RowStream({ 'stream': source });
+	rowstream = new mod_daggr.RowStream({
+	    'mode': mode,
+	    'stream': source
+	});
 	consumer = mod_daggr.createConsumer(action, {
-	    'mode': 'text',
+	    'mode': mode,
 	    'action': action,
 	    'key': keys,
             'value': value,
