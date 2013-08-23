@@ -4,7 +4,6 @@
  * Status: sum, count actions work with hardcoded "key" and "value" fields
  *
  * Roadmap:
- * - Add quantize aggregator that prints a histogram.
  * - Add filtering
  * - Add JSON support
  */
