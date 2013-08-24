@@ -1,12 +1,5 @@
 #!/usr/bin/env node
 
-/*
- * Status: sum, count actions work with hardcoded "key" and "value" fields
- *
- * Roadmap:
- * - Add filtering
- */
-
 var mod_path = require('path');
 var mod_extsprintf = require('extsprintf');
 var mod_getopt = require('posix-getopt');
@@ -29,13 +22,18 @@ function main()
 	var action = 'print'
 	var mode = 'text';
 	var outputs = null;
-	var source, rowstream, consumer;
+	var filters = [];
+	var source, stream, args, consumer;
 
-	parser = new mod_getopt.BasicParser('jk:o:v:', process.argv);
+	parser = new mod_getopt.BasicParser('f:jk:o:v:', process.argv);
 	while ((option = parser.getopt()) !== undefined) {
 		switch (option.option) {
 		case 'k':
 			keys.push(option.optarg);
+			break;
+
+		case 'f':
+			filters.push(option.optarg);
 			break;
 
 		case 'j':
@@ -51,6 +49,9 @@ function main()
 		case 'v':
 			value = option.optarg;
 			break;
+
+		default:
+			usage();
 		}
 	}
 
@@ -61,19 +62,31 @@ function main()
 		outputs = [ '0' ];
 
 	source = process.stdin;
-	rowstream = new mod_daggr.RowStream({
+	stream = new mod_daggr.RowStream({
 	    'mode': mode,
 	    'stream': source
 	});
-	consumer = mod_daggr.createConsumer(action, {
+
+	args = {
 	    'mode': mode,
 	    'action': action,
 	    'key': keys,
             'value': value,
-	    'stream': rowstream,
+	    'stream': stream,
 	    'outputs': outputs,
 	    'outstream': process.stdout
+	};
+
+	filters.forEach(function (f) {
+		try {
+			stream = args['stream'] = 
+			    new mod_daggr.FilterStream(args, f);
+		} catch (err) {
+			fatal('bad filter "' + f + '": ' + err.message);
+		}
 	});
+	
+	consumer = mod_daggr.createConsumer(action, args);
 
 	if (consumer instanceof Error)
 		fatal(consumer.message);
@@ -83,7 +96,8 @@ function main()
 
 function usage(message)
 {
-	console.error('%s: %s', daArg0, message);
+	if (arguments.length > 0)
+		console.error('%s: %s', daArg0, message);
 	console.error(daUsage);
 	process.exit(2);
 }
