@@ -24,7 +24,7 @@ var daUsage = sprintf([
     'row.  If the result is not truthy, the row is discarded.  For plaintext ',
     'input, variables $N correspond to whitespace-separated fields N, ',
     'starting from 1 (just like awk(1)).  For json input, variables ',
-    'correspond to fields of each object.
+    'correspond to fields of each object.',
     '',
     'FIELD is a JavaScript property expression, as in "prop1.prop2[...]".  ',
     'This may not be an arbitrary expression, and if the property is not ',
