@@ -56,11 +56,12 @@ function main()
 	var value = '1';
 	var action = 'print'
 	var mode = 'text';
+	var filtermode = 'isolate';
 	var outputs = null;
 	var filters = [];
 	var source, stream, args, consumer;
 
-	parser = new mod_getopt.BasicParser('f:jk:o:v:', process.argv);
+	parser = new mod_getopt.BasicParser('Ff:jk:o:v:', process.argv);
 	while ((option = parser.getopt()) !== undefined) {
 		switch (option.option) {
 		case 'k':
@@ -69,6 +70,10 @@ function main()
 
 		case 'f':
 			filters.push(option.optarg);
+			break;
+
+		case 'F':
+			filtermode = 'fast';
 			break;
 
 		case 'j':
@@ -109,6 +114,7 @@ function main()
             'value': value,
 	    'stream': stream,
 	    'outputs': outputs,
+	    'filtermode': filtermode,
 	    'outstream': process.stdout
 	};
 
