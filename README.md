@@ -190,33 +190,34 @@ with "req.method" == "PUT":
 Here's an example that takes a bunch of such records and produces histograms of
 "res.headers['x-response-time']" for each value of "req.method":
 
-POST 
-           value  ------------- Distribution ------------- count
-               4 |                                         0
-               8 |@@@@@@@@@@                               1
-              16 |@@@@@@@@@@                               1
-              32 |@@@@@@@@@@@@@@@@@@@@                     2
-              64 |                                         0
-
-HEAD 
-           value  ------------- Distribution ------------- count
-               8 |                                         0
-              16 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 1
-              32 |                                         0
-
-GET 
-           value  ------------- Distribution ------------- count
-               2 |                                         0
-               4 |@@@@                                     2
-               8 |@@@@@@@@@@@@@@@@@                        8
-              16 |@@@@@@@@@@@@@@@@@@@                      9
-              32 |                                         0
-
-PUT 
-           value  ------------- Distribution ------------- count
-              16 |                                         0
-              32 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 2
-              64 |                                         0
+    $ daggr -j -k req.method -v res.headers.x-response-time quantize < requests.json
+    POST 
+               value  ------------- Distribution ------------- count
+                   4 |                                         0
+                   8 |@@@@@@@@@@                               1
+                  16 |@@@@@@@@@@                               1
+                  32 |@@@@@@@@@@@@@@@@@@@@                     2
+                  64 |                                         0
+    
+    HEAD 
+               value  ------------- Distribution ------------- count
+                   8 |                                         0
+                  16 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 1
+                  32 |                                         0
+    
+    GET 
+               value  ------------- Distribution ------------- count
+                   2 |                                         0
+                   4 |@@@@                                     2
+                   8 |@@@@@@@@@@@@@@@@@                        8
+                  16 |@@@@@@@@@@@@@@@@@@@                      9
+                  32 |                                         0
+    
+    PUT 
+               value  ------------- Distribution ------------- count
+                  16 |                                         0
+                  32 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 2
+                  64 |                                         0
 
 
 
